@@ -3,7 +3,7 @@ layout: post
 title: "ActiveRecord like callbacks using active_model"
 date: 2013-10-01 10:40
 comments: true
-published: false
+published: true
 categories:
 ---
 
