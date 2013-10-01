@@ -4,7 +4,7 @@
   <title><![CDATA[ckgagan Blog]]></title>
   <link href="http://ckgagan.github.io/atom.xml" rel="self"/>
   <link href="http://ckgagan.github.io/"/>
-  <updated>2013-10-01T12:18:54+05:45</updated>
+  <updated>2013-10-01T14:27:35+05:45</updated>
   <id>http://ckgagan.github.io/</id>
   <author>
     <name><![CDATA[Gagan Shrestha]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[ActiveRecord like callbacks using active_model]]></title>
+    <title type="html"><![CDATA[ActiveRecord like callbacks using ActiveModel]]></title>
     <link href="http://ckgagan.github.io/blog/2013/10/01/activerecord-like-callbacks-using-active-model/"/>
     <updated>2013-10-01T10:40:00+05:45</updated>
     <id>http://ckgagan.github.io/blog/2013/10/01/activerecord-like-callbacks-using-active-model</id>
@@ -27,25 +27,22 @@ Similar to active record, the callback chain is aborted as soon as one of the me
 
 <p>First of all we will need to require active_model</p>
 
-<pre>
-require 'active_model'
-</pre>
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;active_model&#39;</span>
+</code></pre></div>
 
 
 <p>then extend any ruby class with</p>
 
-<pre>
-class Transaction
-  extend ::ActiveModel::Callbacks
-end
-</pre>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Transaction</span>
+  <span class="kp">extend</span> <span class="o">::</span><span class="ss">ActiveModel</span><span class="p">:</span><span class="ss">:Callbacks</span>
+<span class="k">end</span>
+</code></pre></div>
 
 
 <p>Then we need to define a list of methods that we want callbacks attached to using define_model_callbacks</p>
 
-<pre>
-define_model_callbacks :withdraw, :deposit
-</pre>
+<div class="highlight"><pre><code class="ruby"><span class="n">define_model_callbacks</span> <span class="ss">:withdraw</span><span class="p">,</span> <span class="ss">:deposit</span>
+</code></pre></div>
 
 
 <p>Here <strong>:withdraw</strong> and <strong>:deposit</strong> are the methods where we want to attach callbacks</p>
@@ -54,29 +51,27 @@ define_model_callbacks :withdraw, :deposit
 
 <p>This will provide all three standard callbacks (before, around and after) for both the :withdraw and :deposit methods. <strong>To implement, we wrap the methods we want callbacks on in a block so that the callbacks get a chance to fire:</strong></p>
 
-<pre>
-def withdraw
-  run_callbacks :withdraw do
-    # Our withdraw code here
-  end
-end
+<div class="highlight"><pre><code class="ruby"><span class="k">def</span> <span class="nf">withdraw</span>
+  <span class="n">run_callbacks</span> <span class="ss">:withdraw</span> <span class="k">do</span>
+    <span class="c1"># Our withdraw code here</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
-def deposit
-  run_callbacks :deposit do
-    # Our deposit code here
-  end
-end
-</pre>
+<span class="k">def</span> <span class="nf">deposit</span>
+  <span class="n">run_callbacks</span> <span class="ss">:deposit</span> <span class="k">do</span>
+    <span class="c1"># Our deposit code here</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 
 <p><strong>run_callbacks</strong> tells to run callbacks along with the main model method.</p>
 
 <p>Now we can define which method to execute when (before, after or around) the model method is invoked in the following way.</p>
 
-<pre>
-before_withdraw :check_if_authentic_user
-after_deposit :send_confirmation
-</pre>
+<div class="highlight"><pre><code class="ruby"><span class="n">before_withdraw</span> <span class="ss">:check_if_authentic_user</span>
+<span class="n">after_deposit</span> <span class="ss">:send_confirmation</span>
+</code></pre></div>
 
 
 <p>So we define <strong>check_if_authentic_user</strong> method and this method gets executed before withdraw method gets executed.
@@ -84,46 +79,48 @@ Similarly <strong>send_confirmation</strong> method gets executed after deposit 
 
 <p>So our class our overall code becomes</p>
 
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;active_model&#39;</span>
+
+<span class="k">class</span> <span class="nc">Transaction</span>
+  <span class="kp">extend</span> <span class="o">::</span><span class="ss">ActiveModel</span><span class="p">:</span><span class="ss">:Callbacks</span>
+
+  <span class="n">define_model_callbacks</span> <span class="ss">:withdraw</span><span class="p">,</span> <span class="ss">:deposit</span>
+
+  <span class="n">before_withdraw</span> <span class="ss">:check_if_authentic_user</span>
+  <span class="n">after_deposit</span> <span class="ss">:send_confirmation</span>
+
+  <span class="k">def</span> <span class="nf">withdraw</span>
+    <span class="n">run_callbacks</span> <span class="ss">:withdraw</span> <span class="k">do</span>
+      <span class="nb">puts</span> <span class="s2">&quot;Money withdrawn&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">deposit</span>
+    <span class="n">run_callbacks</span> <span class="ss">:deposit</span> <span class="k">do</span>
+      <span class="nb">puts</span> <span class="s2">&quot;deposited&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">check_if_authentic_user</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Checking if user is authentic&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">send_confirmation</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Confirmation sent&quot;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+<span class="n">transaction</span> <span class="o">=</span> <span class="no">Transaction</span><span class="o">.</span><span class="n">new</span>
+<span class="n">transaction</span><span class="o">.</span><span class="n">withdraw</span>
+<span class="n">transaction</span><span class="o">.</span><span class="n">deposit</span>
+</code></pre></div>
+
+
+<p>Outputs</p>
+
 <pre>
-require 'active_model'
-
-class Transaction
-  extend ::ActiveModel::Callbacks
-
-  define_model_callbacks :withdraw, :deposit
-
-  before_withdraw :check_if_authentic_user
-  after_deposit :send_confirmation
-
-  def withdraw
-    run_callbacks :withdraw do
-      puts "Money withdrawn"
-    end
-  end
-
-  def deposit
-    run_callbacks :deposit do
-      puts "deposited"
-    end
-  end
-
-  def check_if_authentic_user
-    puts "Checking if user is authentic"
-  end
-
-  def send_confirmation
-    puts "Confirmation sent"
-  end
-
-end
-
-
-transaction = Transaction.new
-transaction.withdraw
-transaction.deposit
-
-Outputs
-
 Checking if user is authentic
 Money withdrawn
 deposited
@@ -135,12 +132,11 @@ Confirmation sent
 
 <p>For example replace <i>check_if_authentic_user</i> with this.</p>
 
-<pre>
-def check_if_authentic_user
-  puts "Authenticating user..."
-  false
-end
-</pre>
+<div class="highlight"><pre><code class="ruby"><span class="k">def</span> <span class="nf">check_if_authentic_user</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Authenticating user...&quot;</span>
+  <span class="kp">false</span>
+<span class="k">end</span>
+</code></pre></div>
 
 
 <p>Our output would be</p>
