@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: encryption | Blog @ ckgagan]]></title>
+  <link href="http://ckgagan.github.io/blog/categories/encryption/atom.xml" rel="self"/>
+  <link href="http://ckgagan.github.io/"/>
+  <updated>2013-10-01T22:26:56+05:45</updated>
+  <id>http://ckgagan.github.io/</id>
+  <author>
+    <name><![CDATA[Gagan Shrestha]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Protect sensitive data using 128 bit encryption]]></title>
+    <link href="http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/"/>
+    <updated>2013-10-01T21:04:00+05:45</updated>
+    <id>http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption</id>
+    <content type="html"><![CDATA[<p><strong>Protect sensitive data using 128 bit encryption</strong></p>
+
+<p>There comes a time, every developer need to protect sensitive information stored in database such as debit/credit card infomation(although I wouldn&rsquo;t recommend to store such data) or other sensitive information of that level. That means we need to store those informations in such a way that its not readable directly(encrypted) and must be able to get the information back when needed. We can achieve this using ezcrypto gem. EzCrypto is an easy to use wrapper around the OpenSSL ruby library and uses AES 128 bit encryption algorithm. So lets see how can we use it in our ruby applicaiton.</p>
+
+<p>First of all we need to require the gem</p>
+
+<p><div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">ezcrypto</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span>
+</code></pre></div></p>
+
+<p>Ezcrypto gem uses a key to encrypt the data and the key can be generated using a password and a salt. Then we use the key&rsquo;s encrypt method to encrypt our sensitive data.
+<div class="highlight"><pre><code class="ruby"><span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">password</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="nb">system</span> <span class="n">salt</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
+<span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="no">This</span> <span class="n">is</span> <span class="n">the</span> <span class="n">text</span> <span class="n">we</span> <span class="n">want</span> <span class="n">to</span> <span class="n">encrypt</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
+</code></pre></div></p>
+
+<p>encrypted_text is the text we will be saving in database.</p>
+
+<p>Now to decypher what has been encrypted and saved in the database, we need the same key which has been used for encryption else it will throw <strong>OpenSSL::Cipher::CipherError</strong> exception</p>
+
+<p><div class="highlight"><pre><code class="ruby"><span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">password</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="nb">system</span> <span class="n">salt</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
+<span class="n">decrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">encrypted_text</span><span class="p">)</span>
+</code></pre></div></p>
+
+<p>Best way to generate the key is to either get password from user himself while decryption or to use the user login password itself. We can store the system salt in our ruby application itself. This way we can make sure that the only user is able to decrypt the sensitive information.</p>
+
+<p>Sample example is given below:
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">ezcrypto</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span>
+<span class="k">begin</span>
+<span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">password</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">some</span> <span class="nb">system</span> <span class="n">salt</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
+<span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="no">This</span> <span class="n">is</span> <span class="n">my</span> <span class="n">secret</span> <span class="n">text</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;h1&gt;key generated second time to decrypt the secret text&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">password</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">some</span> <span class="nb">system</span> <span class="n">salt</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;p&gt;decrypted_text = key.decrypt(encrypted_text)</span>
+<span class="sr">puts &amp;ldquo;The decrypted text is: </span><span class="si">#{</span><span class="n">decrypted_text</span><span class="si">}</span><span class="sr">&amp;rdquo;</span>
+<span class="sr">rescue OpenSSL::Cipher::CipherError</span>
+<span class="sr">  puts &amp;ldquo;Error while decrypting&amp;rdquo;</span>
+<span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;=&gt;</span> <span class="no">The</span> <span class="n">decrypted</span> <span class="n">text</span> <span class="ss">is</span><span class="p">:</span> <span class="no">This</span> <span class="n">is</span> <span class="n">my</span> <span class="n">secret</span> <span class="n">text</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+
+<span class="sr">&lt;p&gt;</span>
+</code></pre></div></p>
+
+<p>If the key was generated with wrong password say &ldquo;password1&rdquo; and the key is used for decrypting the encrypted_text, the output would be
+<div class="highlight"><pre><code class="ruby"><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;h1&gt;=&gt; Error while decrypting&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</code></pre></div></p>
+]]></content>
+  </entry>
+  
+</feed>

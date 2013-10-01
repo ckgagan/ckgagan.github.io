@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog @ ckgagan</title>
+  <title>Protect sensitive data using 128 bit encryption - Blog @ ckgagan</title>
   <meta name="author" content="Gagan Shrestha">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ckgagan.github.io">
+  <link rel="canonical" href="http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Blog @ ckgagan" type="application/atom+xml">
@@ -63,15 +63,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/">Protect Sensitive Data Using 128 Bit Encryption</a></h1>
+      <h1 class="entry-title">Protect Sensitive Data Using 128 Bit Encryption</h1>
     
     
       <p class="meta">
@@ -94,7 +91,7 @@
   </header>
 
 
-  <div class="entry-content"><p><strong>Protect sensitive data using 128 bit encryption</strong></p>
+<div class="entry-content"><p><strong>Protect sensitive data using 128 bit encryption</strong></p>
 
 <p>There comes a time, every developer need to protect sensitive information stored in database such as debit/credit card infomation(although I wouldn&rsquo;t recommend to store such data) or other sensitive information of that level. That means we need to store those informations in such a way that its not readable directly(encrypted) and must be able to get the information back when needed. We can achieve this using ezcrypto gem. EzCrypto is an easy to use wrapper around the OpenSSL ruby library and uses AES 128 bit encryption algorithm. So lets see how can we use it in our ruby applicaiton.</p>
 
@@ -150,22 +147,16 @@
 
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/01/activerecord-like-callbacks-using-active-model/">ActiveRecord Like Callbacks Using ActiveModel</a></h1>
-    
-    
-      <p class="meta">
-        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gagan Shrestha</span></span>
+
+      
 
 
 
@@ -177,157 +168,44 @@
   
 
 
-<time datetime="2013-10-01T10:40:00+05:45" pubdate data-updated="true">Oct 1<span>st</span>, 2013</time>
-        
-      </p>
+<time datetime="2013-10-01T21:04:00+05:45" pubdate data-updated="true">Oct 1<span>st</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/decryption/'>decryption</a>, <a class='category' href='/blog/categories/encryption/'>encryption</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/security/'>security</a>
+  
+</span>
+
+
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p><strong>ActiveRecord like callbacks using ActiveModel</strong></p>
-
-<p>We have seen ActiveRecord callbacks which are executed before or after the object is created or updated.
-But how do we provide the similar interface for none persistent models. Well here ActiveModel callbacks comes to rescue.
-ActiveModel Callbacks provides an interface for any class to have Active Record like callbacks.
-Similar to active record, the callback chain is aborted as soon as one of the methods in the chain returns false.</p>
-
-<p>First of all we will need to require active_model</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;active_model&#39;</span>
-</code></pre></div>
-
-
-<p>then extend any ruby class with</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Transaction</span>
-  <span class="kp">extend</span> <span class="o">::</span><span class="ss">ActiveModel</span><span class="p">:</span><span class="ss">:Callbacks</span>
-<span class="k">end</span>
-</code></pre></div>
-
-
-<p>Then we need to define a list of methods that we want callbacks attached to using define_model_callbacks</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="n">define_model_callbacks</span> <span class="ss">:withdraw</span><span class="p">,</span> <span class="ss">:deposit</span>
-</code></pre></div>
-
-
-<p>Here <strong>:withdraw</strong> and <strong>:deposit</strong> are the methods where we want to attach callbacks</p>
-
-<p>Defining callback methods using <strong>define_model_callbacks</strong> allows us to define methods which can be executed <strong>before, after and around</strong> the model methods ie:; withdraw and deposit methods</p>
-
-<p>This will provide all three standard callbacks (before, around and after) for both the :withdraw and :deposit methods. <strong>To implement, we wrap the methods we want callbacks on in a block so that the callbacks get a chance to fire:</strong></p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">def</span> <span class="nf">withdraw</span>
-  <span class="n">run_callbacks</span> <span class="ss">:withdraw</span> <span class="k">do</span>
-    <span class="c1"># Our withdraw code here</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="k">def</span> <span class="nf">deposit</span>
-  <span class="n">run_callbacks</span> <span class="ss">:deposit</span> <span class="k">do</span>
-    <span class="c1"># Our deposit code here</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre></div>
-
-
-<p><strong>run_callbacks</strong> tells to run callbacks along with the main model method.</p>
-
-<p>Now we can define which method to execute when (before, after or around) the model method is invoked in the following way.</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="n">before_withdraw</span> <span class="ss">:check_if_authentic_user</span>
-<span class="n">after_deposit</span> <span class="ss">:send_confirmation</span>
-</code></pre></div>
-
-
-<p>So we define <strong>check_if_authentic_user</strong> method and this method gets executed before withdraw method gets executed.
-Similarly <strong>send_confirmation</strong> method gets executed after deposit method gets executed.</p>
-
-<p>So our class our overall code becomes</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;active_model&#39;</span>
-
-<span class="k">class</span> <span class="nc">Transaction</span>
-  <span class="kp">extend</span> <span class="o">::</span><span class="ss">ActiveModel</span><span class="p">:</span><span class="ss">:Callbacks</span>
-
-  <span class="n">define_model_callbacks</span> <span class="ss">:withdraw</span><span class="p">,</span> <span class="ss">:deposit</span>
-
-  <span class="n">before_withdraw</span> <span class="ss">:check_if_authentic_user</span>
-  <span class="n">after_deposit</span> <span class="ss">:send_confirmation</span>
-
-  <span class="k">def</span> <span class="nf">withdraw</span>
-    <span class="n">run_callbacks</span> <span class="ss">:withdraw</span> <span class="k">do</span>
-      <span class="nb">puts</span> <span class="s2">&quot;Money withdrawn&quot;</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">deposit</span>
-    <span class="n">run_callbacks</span> <span class="ss">:deposit</span> <span class="k">do</span>
-      <span class="nb">puts</span> <span class="s2">&quot;deposited&quot;</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">check_if_authentic_user</span>
-    <span class="nb">puts</span> <span class="s2">&quot;Checking if user is authentic&quot;</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">send_confirmation</span>
-    <span class="nb">puts</span> <span class="s2">&quot;Confirmation sent&quot;</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-
-
-<span class="n">transaction</span> <span class="o">=</span> <span class="no">Transaction</span><span class="o">.</span><span class="n">new</span>
-<span class="n">transaction</span><span class="o">.</span><span class="n">withdraw</span>
-<span class="n">transaction</span><span class="o">.</span><span class="n">deposit</span>
-</code></pre></div>
-
-
-<p>Outputs</p>
-
-<pre>
-Checking if user is authentic
-Money withdrawn
-deposited
-Confirmation sent
-</pre>
-
-
-<p><strong>But if we return false from the callback method then the callback chain gets terminated.</strong><br/></p>
-
-<p>For example replace <i>check_if_authentic_user</i> with this.</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">def</span> <span class="nf">check_if_authentic_user</span>
-  <span class="nb">puts</span> <span class="s2">&quot;Authenticating user...&quot;</span>
-  <span class="kp">false</span>
-<span class="k">end</span>
-</code></pre></div>
-
-
-<p>Our output would be</p>
-
-<pre>
-Authenticating user...
-deposited
-Confirmation sent
-</pre>
-
-
-<p>Since callback method <strong>check_if_authentic_user</strong> returned false the main <strong>:withdraw</strong> method never gets executed</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/" data-via="ck_gagan" data-counturl="http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/01/activerecord-like-callbacks-using-active-model/" title="Previous Post: ActiveRecord like callbacks using ActiveModel">&laquo; ActiveRecord like callbacks using ActiveModel</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -356,7 +234,7 @@ Confirmation sent
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/ckgagan">@ckgagan</a> on GitHub
@@ -389,6 +267,7 @@ Confirmation sent
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -403,7 +282,10 @@ Confirmation sent
       var disqus_shortname = 'true';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/';
+        var disqus_url = 'http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

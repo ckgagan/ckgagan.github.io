@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[ckgagan Blog]]></title>
+  <title><![CDATA[Blog @ ckgagan]]></title>
   <link href="http://ckgagan.github.io/atom.xml" rel="self"/>
   <link href="http://ckgagan.github.io/"/>
-  <updated>2013-10-01T14:27:35+05:45</updated>
+  <updated>2013-10-01T22:26:56+05:45</updated>
   <id>http://ckgagan.github.io/</id>
   <author>
     <name><![CDATA[Gagan Shrestha]]></name>
@@ -14,11 +14,74 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Protect sensitive data using 128 bit encryption]]></title>
+    <link href="http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/"/>
+    <updated>2013-10-01T21:04:00+05:45</updated>
+    <id>http://ckgagan.github.io/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption</id>
+    <content type="html"><![CDATA[<p><strong>Protect sensitive data using 128 bit encryption</strong></p>
+
+<p>There comes a time, every developer need to protect sensitive information stored in database such as debit/credit card infomation(although I wouldn&rsquo;t recommend to store such data) or other sensitive information of that level. That means we need to store those informations in such a way that its not readable directly(encrypted) and must be able to get the information back when needed. We can achieve this using ezcrypto gem. EzCrypto is an easy to use wrapper around the OpenSSL ruby library and uses AES 128 bit encryption algorithm. So lets see how can we use it in our ruby applicaiton.</p>
+
+<p>First of all we need to require the gem</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;ezcrypto&#39;</span>
+</code></pre></div>
+
+
+<p>Ezcrypto gem uses a key to encrypt the data and the key can be generated using a password and a salt. Then we use the key&rsquo;s encrypt method to encrypt our sensitive data.</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;system salt&#39;</span><span class="p">)</span>
+<span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="s1">&#39;This is the text we want to encrypt&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>encrypted_text is the text we will be saving in database.</p>
+
+<p>Now to decypher what has been encrypted and saved in the database, we need the same key which has been used for encryption else it will throw <strong>OpenSSL::Cipher::CipherError</strong> exception</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;system salt&#39;</span><span class="p">)</span>
+<span class="n">decrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">encrypted_text</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>Best way to generate the key is to either get password from user himself while decryption or to use the user login password itself. We can store the system salt in our ruby application itself. This way we can make sure that the only user is able to decrypt the sensitive information.</p>
+
+<p>Sample example is given below:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;ezcrypto&#39;</span>
+<span class="k">begin</span>
+<span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;some system salt&#39;</span><span class="p">)</span>
+<span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="s1">&#39;This is my secret text&#39;</span><span class="p">)</span>
+
+<span class="c1"># key generated second time to decrypt the secret text</span>
+<span class="n">key</span> <span class="o">=</span> <span class="ss">EzCrypto</span><span class="p">:</span><span class="ss">:Key</span><span class="o">.</span><span class="n">with_password</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;some system salt&#39;</span><span class="p">)</span>
+
+<span class="n">decrypted_text</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">encrypted_text</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="s2">&quot;The decrypted text is: </span><span class="si">#{</span><span class="n">decrypted_text</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">rescue</span> <span class="ss">OpenSSL</span><span class="p">:</span><span class="ss">:Cipher</span><span class="o">::</span><span class="no">CipherError</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Error while decrypting&quot;</span>
+<span class="k">end</span>
+
+<span class="c1">#=&gt; The decrypted text is: This is my secret text</span>
+</code></pre></div>
+
+
+<p>If the key was generated with wrong password say &ldquo;password1&rdquo; and the key is used for decrypting the encrypted_text, the output would be</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#=&gt; Error while decrypting</span>
+</code></pre></div>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[ActiveRecord like callbacks using ActiveModel]]></title>
     <link href="http://ckgagan.github.io/blog/2013/10/01/activerecord-like-callbacks-using-active-model/"/>
     <updated>2013-10-01T10:40:00+05:45</updated>
     <id>http://ckgagan.github.io/blog/2013/10/01/activerecord-like-callbacks-using-active-model</id>
-    <content type="html"><![CDATA[<p><strong>ActiveRecord like callbacks using active_model</strong></p>
+    <content type="html"><![CDATA[<p><strong>ActiveRecord like callbacks using ActiveModel</strong></p>
 
 <p>We have seen ActiveRecord callbacks which are executed before or after the object is created or updated.
 But how do we provide the similar interface for none persistent models. Well here ActiveModel callbacks comes to rescue.
