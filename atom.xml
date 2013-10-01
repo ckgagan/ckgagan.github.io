@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[My Octopress Blog]]></title>
+  <link href="http://ckgagan.github.io/atom.xml" rel="self"/>
+  <link href="http://ckgagan.github.io/"/>
+  <updated>2013-10-01T11:58:39+05:45</updated>
+  <id>http://ckgagan.github.io/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ActiveRecord like callbacks using active_model]]></title>
+    <link href="http://ckgagan.github.io/blog/2013/10/01/activerecord-like-callbacks-using-active-model/"/>
+    <updated>2013-10-01T10:40:00+05:45</updated>
+    <id>http://ckgagan.github.io/blog/2013/10/01/activerecord-like-callbacks-using-active-model</id>
+    <content type="html"><![CDATA[<p><strong>ActiveRecord like callbacks using active_model</strong></p>
+
+<p>We have seen ActiveRecord callbacks which are executed before or after the object is created or updated.
+But how do we provide the similar interface for none persistent models. Well here ActiveModel callbacks comes to rescue.
+ActiveModel Callbacks provides an interface for any class to have Active Record like callbacks.
+Similar to active record, the callback chain is aborted as soon as one of the methods in the chain returns false.</p>
+
+<p>First of all we will need to require active_model</p>
+
+<pre>
+require 'active_model'
+</pre>
+
+
+<p>then extend any ruby class with</p>
+
+<pre>
+class Transaction
+  extend ::ActiveModel::Callbacks
+end
+</pre>
+
+
+<p>Then we need to define a list of methods that we want callbacks attached to using define_model_callbacks</p>
+
+<pre>
+define_model_callbacks :withdraw, :deposit
+</pre>
+
+
+<p>Here <strong>:withdraw</strong> and <strong>:deposit</strong> are the methods where we want to attach callbacks</p>
+
+<p>Defining callback methods using <strong>define_model_callbacks</strong> allows us to define methods which can be executed <strong>before, after and around</strong> the model methods ie:; withdraw and deposit methods</p>
+
+<p>This will provide all three standard callbacks (before, around and after) for both the :withdraw and :deposit methods. <strong>To implement, we wrap the methods we want callbacks on in a block so that the callbacks get a chance to fire:</strong></p>
+
+<pre>
+def withdraw
+  run_callbacks :withdraw do
+    # Our withdraw code here
+  end
+end
+
+def deposit
+  run_callbacks :deposit do
+    # Our deposit code here
+  end
+end
+</pre>
+
+
+<p><strong>run_callbacks</strong> tells to run callbacks along with the main model method.</p>
+
+<p>Now we can define which method to execute when (before, after or around) the model method is invoked in the following way.</p>
+
+<pre>
+before_withdraw :check_if_authentic_user
+after_deposit :send_confirmation
+</pre>
+
+
+<p>So we define <strong>check_if_authentic_user</strong> method and this method gets executed before withdraw method gets executed.
+Similarly <strong>send_confirmation</strong> method gets executed after deposit method gets executed.</p>
+
+<p>So our class our overall code becomes</p>
+
+<pre>
+require 'active_model'
+
+class Transaction
+  extend ::ActiveModel::Callbacks
+
+  define_model_callbacks :withdraw, :deposit
+
+  before_withdraw :check_if_authentic_user
+  after_deposit :send_confirmation
+
+  def withdraw
+    run_callbacks :withdraw do
+      puts "Money withdrawn"
+    end
+  end
+
+  def deposit
+    run_callbacks :deposit do
+      puts "deposited"
+    end
+  end
+
+  def check_if_authentic_user
+    puts "Checking if user is authentic"
+  end
+
+  def send_confirmation
+    puts "Confirmation sent"
+  end
+
+end
+
+
+transaction = Transaction.new
+transaction.withdraw
+transaction.deposit
+
+Outputs
+
+Checking if user is authentic
+Money withdrawn
+deposited
+Confirmation sent
+</pre>
+
+
+<p><strong>But if we return false from the callback method then the callback chain gets terminated.</strong><br/></p>
+
+<p>For example replace <i>check_if_authentic_user</i> with this.</p>
+
+<pre>
+def check_if_authentic_user
+  puts "Authenticating user..."
+  false
+end
+</pre>
+
+
+<p>Our output would be</p>
+
+<pre>
+Authenticating user...
+deposited
+Confirmation sent
+</pre>
+
+
+<p>Since callback method <strong>check_if_authentic_user</strong> returned false the main <strong>:withdraw</strong> method never gets executed</p>
+]]></content>
+  </entry>
+  
+</feed>
