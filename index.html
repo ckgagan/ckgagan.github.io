@@ -9,7 +9,8 @@
   <meta name="author" content="Gagan Shrestha">
 
   
-  <meta name="description" content="Protect sensitive data using 128 bit encryption There comes a time, every developer need to protect sensitive information stored in database such as &hellip;">
+  <meta name="description" content="Its really annoying when the page redirects to previous page while filling up the form by accident.
+Specially in chrome when the form field is not in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -38,7 +39,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">Blog @ ckgagan</a></h1>
   
-    <h2>Sharing what I knew.</h2>
+    <h2>Sharing Sharing Sharing.</h2>
   
 </hgroup>
 
@@ -65,6 +66,78 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/13/ask-confirmtion-of-user-before-leaving-the-page/">Ask Confirmtion of User Before Leaving the Page.</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-13T07:40:00+05:45" pubdate data-updated="true">Oct 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Its really annoying when the page redirects to previous page while filling up the form by accident.
+Specially in chrome when the form field is not in focus and the user hits backspace button, the page gets redirected to
+previous page. We can stop this by asking the confirmation to user if they wanted to redirect to other page.</p>
+
+<p>First of all we need to determine if we want to show the confirmation or not to the user when they tried to redirect from
+the page. We can use a variable for this. Lets say it to be</p>
+
+<pre>var needToConfirm = false;</pre>
+
+
+<p>and set it to false denoting that we don&rsquo;t want to show the confirmation.</p>
+
+<p>window.onbeforeunload event gets triggered everytime the page gets reloaded or redirected. We can attach a
+method to this event handler.</p>
+
+<pre>window.onbeforeunload = confirmExit;</pre>
+
+
+<p>Now we need a function that will return the confirmation message when this variable is set to true.
+The function might look like</p>
+
+<pre>
+function confirmExit()
+{
+  if (needToConfirm)
+  {
+    return "{message}";
+  }
+}
+</pre>
+
+
+<p>Here message is the string we want to show in confirmation box.</p>
+
+<p>Lets take an example where user is filling up a form. When the form fields are updated, set needToConfirm variable to true.
+This way when the use tries to navigate away by accident, confirmation dialog will be displayed. But bear in mind, we need to
+set this variable to false when user clicks the submit button. This way the confirmation dialog will not be displayed while form is submitted.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -339,6 +412,10 @@ Confirmation sent
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/13/ask-confirmtion-of-user-before-leaving-the-page/">Ask Confirmtion of User Before Leaving the Page.</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/10/01/protect-sensitive-data-using-128-bit-encryption/">Protect Sensitive Data Using 128 Bit Encryption</a>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: javascript | Blog @ ckgagan]]></title>
+  <link href="http://ckgagan.github.io/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="http://ckgagan.github.io/"/>
+  <updated>2013-10-13T07:54:22+05:45</updated>
+  <id>http://ckgagan.github.io/</id>
+  <author>
+    <name><![CDATA[Gagan Shrestha]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ask confirmtion of user before leaving the page.]]></title>
+    <link href="http://ckgagan.github.io/blog/2013/10/13/ask-confirmtion-of-user-before-leaving-the-page/"/>
+    <updated>2013-10-13T07:40:00+05:45</updated>
+    <id>http://ckgagan.github.io/blog/2013/10/13/ask-confirmtion-of-user-before-leaving-the-page</id>
+    <content type="html"><![CDATA[<p>Its really annoying when the page redirects to previous page while filling up the form by accident.
+Specially in chrome when the form field is not in focus and the user hits backspace button, the page gets redirected to
+previous page. We can stop this by asking the confirmation to user if they wanted to redirect to other page.</p>
+
+<p>First of all we need to determine if we want to show the confirmation or not to the user when they tried to redirect from
+the page. We can use a variable for this. Lets say it to be</p>
+
+<pre>var needToConfirm = false;</pre>
+
+
+<p>and set it to false denoting that we don&rsquo;t want to show the confirmation.</p>
+
+<p>window.onbeforeunload event gets triggered everytime the page gets reloaded or redirected. We can attach a
+method to this event handler.</p>
+
+<pre>window.onbeforeunload = confirmExit;</pre>
+
+
+<p>Now we need a function that will return the confirmation message when this variable is set to true.
+The function might look like</p>
+
+<pre>
+function confirmExit()
+{
+  if (needToConfirm)
+  {
+    return "{message}";
+  }
+}
+</pre>
+
+
+<p>Here message is the string we want to show in confirmation box.</p>
+
+<p>Lets take an example where user is filling up a form. When the form fields are updated, set needToConfirm variable to true.
+This way when the use tries to navigate away by accident, confirmation dialog will be displayed. But bear in mind, we need to
+set this variable to false when user clicks the submit button. This way the confirmation dialog will not be displayed while form is submitted.</p>
+]]></content>
+  </entry>
+  
+</feed>
